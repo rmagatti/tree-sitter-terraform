@@ -1,0 +1,31 @@
+{
+  "name": "tree-sitter-terraform",
+  "version": "0.0.1",
+  "description": "Tree Sitter grammar for Terraform (hcl2)",
+  "main": "bindings/node",
+  "keywords": [
+    "tree-sitter",
+    "parser",
+    "terraform"
+  ],
+  "scripts": {
+    "test": "tree-sitter test",
+    "build": "tree-sitter generate && node-gyp build --debug"
+  },
+  "author": "",
+  "license": "Apache License 2.0",
+  "devDependencies": {
+    "tree-sitter-cli": "^0.19.1"
+  },
+  "dependencies": {
+    "nan": "^2.14.2"
+  },
+  "files": [
+    "src",
+    "binding.gyp",
+    "grammar.js",
+    "index.js",
+    "package.json",
+    "package-lock.json"
+  ]
+}

@@ -1,0 +1,119 @@
+===
+simple local
+===
+
+locals {
+  ami = "a-123"
+  age = 76
+}
+
+---
+
+(configuration
+  (locals
+    (block
+      (attribute (identifier) (string_literal))
+      (attribute (identifier) (number)))))
+
+===
+ternary operation with equality
+===
+
+locals {
+  foo = var.bla == "production" ? "bla" : "thing"
+}
+---
+
+(configuration
+  (locals
+    (block
+      (attribute (identifier) (ternary (comparison (reference) (eq) (string_literal)) (string_literal) (string_literal) )))))
+
+===
+ternary operation with greater than
+===
+
+locals {
+  foo = var.bla > 10 ? "bla" : "thing"
+}
+---
+
+(configuration
+  (locals
+    (block
+      (attribute (identifier) (ternary (comparison (reference) (gt) (number)) (string_literal) (string_literal) )))))
+
+===
+ternary operation with less than
+===
+
+locals {
+  foo = var.bla < 10 ? "bla" : "thing"
+}
+---
+
+(configuration
+  (locals
+    (block
+      (attribute (identifier) (ternary (comparison (reference) (lt) (number)) (string_literal) (string_literal) )))))
+
+===
+Ternary from gladis-api
+===
+
+locals {
+  _env_zone   = var.environment == "production" ? "" : "${var.environment}."
+  hosted_zone = "${local._env_zone}gladis.mrdigitalpartners.com"
+
+  vpc = data.terraform_remote_state.environment_infra.outputs.vpc
+}
+
+---
+
+(configuration
+ (locals (block
+  (attribute (identifier) (ternary
+    (comparison (reference) (eq) (string_literal))
+    (string_literal)
+    (string_literal)))
+  (attribute (identifier) (string_literal))
+  (attribute (identifier) (reference)))))
+
+===
+Multiplication and minus
+===
+
+
+locals {
+  human_friendly_percent_remaining = var.percent_full * 100
+
+  bytes_in_a_gb = 1073741824
+
+  percent_remaining = 1.0 - var.percent_full
+}
+
+---
+(configuration
+  (locals
+    (block
+      (attribute (identifier) (reference) (multiplication) (number))
+      (attribute (identifier) (number))
+      (attribute (identifier) (number) (substraction) (reference)))))
+
+
+===
+Complex multiplication
+===
+
+locals {
+  bytes_remaining = A * B * C
+}
+
+---
+
+(configuration
+  (locals
+    (block
+      (attribute (identifier) (reference) (multiplication)
+                              (reference) (multiplication) (reference))
+      )))

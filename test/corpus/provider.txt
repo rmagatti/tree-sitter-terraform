@@ -1,0 +1,16 @@
+===
+A simple provider
+===
+
+provider "aws" {
+  version = "~> 2.0"
+  region  = "us-east-1"
+}
+
+---
+
+(configuration
+  (provider (provider_name)
+    (block
+      (attribute (identifier) (string_literal))
+      (attribute (identifier) (string_literal)))))

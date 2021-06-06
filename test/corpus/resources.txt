@@ -1,0 +1,230 @@
+===
+A resource with basic attributes
+===
+
+
+resource "aws_instance" "example" {
+  ami           = "XYZ-2757f631"
+  foo_t           = true
+  bar_f           = false
+  num             = 987654321
+  many            = ["one", "two"]
+  ref             = var.lambda_deployment_role_id
+}
+
+---
+
+(configuration
+  (resource
+    (resource_type)
+    (resource_name)
+    (block
+      (attribute (identifier) (string_literal))
+      (attribute (identifier) (boolean))
+      (attribute (identifier) (boolean))
+      (attribute (identifier) (number))
+      (attribute (identifier) (list (string_literal) (string_literal)))
+      (attribute (identifier) (reference))
+      )))
+
+===
+a resource with a block attribute
+===
+
+
+resource "aws_instance" "example" {
+  example {
+    foo = "bar"
+  }
+}
+
+
+---
+
+(configuration
+  (resource
+    (resource_type)
+    (resource_name)
+    (block
+      (attribute
+        (named_map (identifier) (map
+                                  (attribute (identifier) (string_literal))))))))
+
+===
+a resource with a function value
+===
+
+resource "aws_security_group" "main" {
+  tags   = merge(var.default_tags, { Name = "gladis-api" })
+}
+
+---
+
+(configuration
+  (resource
+    (resource_type)
+    (resource_name)
+    (block
+      (attribute (identifier) (function (fn_param (reference)) (fn_param (map (keyValue (identifier) (string_literal)))))))))
+
+
+===
+length function
+===
+
+
+resource "aws_security_group" "main" {
+  tags   = length(var.default_tags)
+}
+
+---
+
+(configuration
+  (resource
+    (resource_type)
+    (resource_name)
+    (block
+     (attribute (identifier) (function (fn_param (reference)))))))
+
+===
+resource with array access on a property
+===
+
+
+resource "aws_api_gateway_method" "main" {
+  for_each = var.endpoints
+
+  resource_id      = aws_api_gateway_resource.route-nodes[each.key].id
+}
+
+---
+
+(configuration
+  (resource
+    (resource_type)
+    (resource_name)
+    (block
+     (attribute (identifier) (reference))
+     (attribute (identifier) (reference)))))
+
+===
+reference in list without square brackets
+===
+
+resource "aws_security_group_rule" "s3" {
+  prefix_list_ids   = [var.s3_prefix_list_id]
+}
+
+---
+
+(configuration
+  (resource (resource_type) (resource_name)
+    (block
+      (attribute (identifier) (list (reference))))))
+
+
+===
+resource with boolean that is derived from comparison
+===
+
+
+resource "aws_api_gateway_method" "main" {
+  for_each = var.endpoints
+
+  api_key_required = each.value.method == "POST"
+}
+
+---
+
+(configuration
+  (resource (resource_type) (resource_name)
+    (block
+      (attribute (identifier) (reference))
+      (attribute (identifier) (reference) (eq) (string_literal)))))
+
+
+===
+resource with more complex functions
+===
+
+resource "aws_api_gateway_deployment" "deployment" {
+  stage_description = md5(file("${path.module}/main.tf"))
+  format            = replace(file("${path.module}/templates/log_format.json"), "\n", "")
+
+  identifiers = toset(concat(
+        local.default_trusted_principals,
+        local.additional_trusted_principals,
+  ))
+}
+
+---
+
+(configuration
+  (resource (resource_type) (resource_name)
+    (block
+      (attribute (identifier) (function (fn_param (function (fn_param (string_literal))))))
+      (attribute
+        (identifier)
+        (function
+          (fn_param
+            (function (fn_param (string_literal))))
+          (fn_param (string_literal))
+          (fn_param (string_literal))))
+      (attribute (identifier) (function (fn_param (function (fn_param (reference)) (fn_param (reference)))))))))
+
+
+===
+resource with string literal that has escaping
+===
+
+resource "aws_api_gateway_deployment" "deployment" {
+  filter_pattern  = "{$.log_type = \"api_request_response\"}"
+}
+
+---
+
+(configuration
+  (resource (resource_type) (resource_name)
+    (block
+      (attribute (identifier) (string_literal)))))
+
+
+===
+resource with for loop in list
+===
+
+resource "aws_api_gateway_deployment" "deployment" {
+  additional_trusted_principals = [
+    for account_id in var.additional_trusted_account_ids :
+    "arn:aws:iam::${account_id}:root"
+  ]
+}
+
+---
+
+(configuration
+  (resource (resource_type) (resource_name)
+    (block
+      (attribute
+        (identifier)
+        (list (for_comprehension (identifier) (reference) (string_literal)))))))
+
+===
+for comprehension with if statement
+===
+
+resource "aws_api_gateway_deployment" "deployment" {
+  additional_trusted_principals = [
+    for account_id in var.additional_trusted_account_ids : "arn:aws:iam::${account_id}:root"
+    if details.family == "platform"
+  ]
+}
+
+---
+
+(configuration
+  (resource (resource_type) (resource_name)
+    (block
+      (attribute
+        (identifier)
+        (list (for_comprehension (identifier) (reference) (string_literal) (if (reference) (eq) (string_literal))))))))

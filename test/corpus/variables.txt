@@ -1,0 +1,161 @@
+===
+Variable without type
+===
+
+variable "db_allocated_storage" {}
+
+---
+
+(configuration
+  (variable (variable_name) (variable_block)))
+
+===
+Simple string variable
+===
+
+variable "image_id" {
+  type = string
+}
+
+variable "create" {
+  type = bool
+}
+
+variable "how_many" {
+  type = number
+}
+
+---
+
+(configuration
+  (variable (variable_name) (variable_block
+    (type (string_ty))))
+
+  (variable (variable_name) (variable_block
+    (type (bool_ty))))
+
+  (variable (variable_name) (variable_block
+    (type (number_ty)))))
+
+===
+List, set, and map types
+===
+
+variable "foos" {
+  type = list(string)
+}
+
+variable "bars" {
+  type = set(string)
+}
+
+variable "maps" {
+  type = map(number)
+}
+
+---
+
+(configuration
+  (variable (variable_name) (variable_block
+    (type (list_ty (string_ty)))))
+
+  (variable (variable_name) (variable_block
+    (type (set_ty (string_ty)))))
+
+  (variable (variable_name) (variable_block
+    (type (map_ty (number_ty))))))
+
+===
+Constructed object type
+===
+
+
+variable "foos" {
+  type = object({left = bool, right = list(string)})
+}
+
+variable "vpc" {
+  type = object({
+    vpc_id     = string,
+    cidr_block = string,
+  })
+}
+
+---
+
+(configuration
+  (variable (variable_name) (variable_block
+    (type (object_ty
+      (object_field (field_name) (bool_ty))
+      (object_field (field_name) (list_ty (string_ty)))))))
+  (variable (variable_name) (variable_block
+    (type (object_ty
+      (object_field (field_name) (string_ty))
+      (object_field (field_name) (string_ty)))))))
+
+===
+Constructed tuple type
+===
+
+variable "foos" {
+  type = tuple([string, number, bool])
+}
+
+---
+
+(configuration
+  (variable (variable_name) (variable_block
+    (type (tuple_ty (string_ty) (number_ty) (bool_ty))))))
+
+
+===
+Variable with description
+===
+
+variable "foo" {
+  type        = string
+  description = "a foo"
+}
+
+---
+
+(configuration
+  (variable (variable_name) (variable_block
+    (type (string_ty))
+    (description))))
+
+===
+Variable with default
+===
+
+variable "foo" {
+  type    = string
+  default = "something"
+}
+
+variable "bar" {
+  type    = list(number)
+  default = [1, 2, 3]
+}
+
+variable "environment_variables" {
+  type        = map(string)
+  default     = {}
+  description = "A list of environment variables."
+}
+
+---
+
+(configuration
+  (variable (variable_name) (variable_block
+    (type (string_ty))
+    (default (string_literal))))
+
+  (variable (variable_name) (variable_block
+    (type (list_ty (number_ty)))
+    (default (list (number) (number) (number)))))
+
+  (variable (variable_name) (variable_block
+    (type (map_ty (string_ty)))
+    (default (map))
+    (description))))

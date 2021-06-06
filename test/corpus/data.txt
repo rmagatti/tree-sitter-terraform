@@ -1,0 +1,58 @@
+===
+Sample AMI data resource
+===
+
+data "aws_ami" "example" {
+  most_recent = true
+
+  owners = ["self"]
+  tags = {
+    Name   = "app-server"
+    Tested = "true"
+  }
+}
+
+---
+
+(configuration
+  (data (data_type) (data_name) (block
+    (attribute (identifier) (boolean))
+    (attribute (identifier) (list (string_literal)))
+    (attribute (identifier) (map
+      (keyValue (identifier) (string_literal))
+      (keyValue (identifier) (string_literal))
+      )))))
+
+===
+Map with commas at the end
+===
+
+data "aws_ami" "example" {
+  tags = {
+    Name   = "app-server",
+    Tested = "true",
+  }
+}
+
+---
+
+(configuration
+  (data (data_type) (data_name) (block
+    (attribute (identifier) (map
+      (keyValue (identifier) (string_literal))
+      (keyValue (identifier) (string_literal))
+      )))))
+
+===
+Empty map
+===
+
+data "aws_ami" "example" {
+  tags = {}
+}
+
+---
+
+(configuration
+  (data (data_type) (data_name) (block
+    (attribute (identifier) (map)))))

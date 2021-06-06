@@ -1,0 +1,26 @@
+===
+Terraform config block
+===
+
+terraform {
+  required_version = "0.12.24"
+
+  backend "s3" {
+    key          = "gladis-api.tfstate"
+    region       = "eu-west-1"
+    session_name = "gitlab-cicd"
+  }
+}
+
+---
+
+(configuration
+  (terraform
+    (block
+      (attribute (identifier) (string_literal))
+      (attribute
+        (named_map (identifier) (string_literal) 
+          (map
+            (attribute (identifier) (string_literal))
+            (attribute (identifier) (string_literal))
+            (attribute (identifier) (string_literal))))))))

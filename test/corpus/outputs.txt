@@ -1,0 +1,18 @@
+===
+Sensitive output with description
+===
+
+output "db_password" {
+  value       = aws_db_instance.db.password
+  description = "The password for logging in to the database."
+  sensitive   = true
+}
+
+---
+
+(configuration
+  (output (output_name)
+    (block
+      (attribute (identifier) (reference))
+      (attribute (identifier) (string_literal))
+      (attribute (identifier) (boolean)))))
