@@ -259,7 +259,7 @@ const grammarObject = {
     },
 
     builtin_object: $ => {
-      return choice('var', 'data', 'module');
+      return choice('var', 'data', 'module', 'local');
     },
 
     member: $ => {
